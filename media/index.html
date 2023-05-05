@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+
+    label{
+      font-weight: bold;
+    }
+
+
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+</head>
+<body>
+  <h1 class="text-xl m-5 font-bold text-center">
+    Total Books ({{total}})
+  </h1>
+  <button class="new flex items-center mr-48 text-lg p-1 px-4 border-2 border-black rounded-xl float-right hover:text-white hover:bg-black"> <img src="{% static 'page.png' %}" class="w-6 mr-2"/>Add book</button>
+<br>
+<br>
+  <div class="md:max-w-[1030px] mx-auto">
+
+    <!-- card -->
+    {% for book in books %}
+    <div class="m-2 border-t-2 border-black shadow-lg shadow-gray-400 p-2 rounded-xl grid md:grid-cols-7">
+      <!-- img -->
+      <img src={{book.cover_image.url}} class="w-36 rounded-xl"/>
+      <div class="flex-col ml-2 items-center col-span-6">
+        <h1 class="text-lg  font-bold m-1">{{book.title}}</h1>
+        <h1 class="text-sm float-left m-1"><span class="font-bold">Author :</span> {{book.author}}</h1>
+        <br>
+        <p class="text-[12px] text-left m-1"><span class="font-bold">Description : </span>{{book.description}}</p>
+        
+        <h1 class="text-sm m-1"><span class="font-bold">Pages : </span>{{book.pages_of_book}} </h1>
+        <div class="m-5 flex justify-around items-center">
+          <img onclick="update_pk({{book.id}})" src="{% static 'write.png' %}" class="w-6 cursor-pointer hover:scale-125 duration-100  ease-in-out" />
+          <img onclick="del({{book.id}})" src="{% static 'delete.png' %}" class="del w-6 cursor-pointer hover:scale-125 duration-100  ease-in-out" />
+        </div>
+        
+        
+        
+      </div>
+
+    </div>
+    {% endfor %}
+
+
+<!-- creating form -->
+    <div class="cf fixed top-[50%] bg-white flex-col left-[50%] translate-x-[-50%] translate-y-[-50%] border-t-2 border-black shadow-gray-400 shadow-lg rounded-xl p-4">
+      <h1 class="text-xl m-5 font-bold text-center">
+        Adding Book
+      </h1>
+
+      <label for="title">Title : </label>
+      <input id="title" placeholder="Title of the Book" class="m-2 rounded-lg border-2 border-black p-1"/>
+<br>
+      <label for="author">Author : </label>
+      <input id="author" placeholder="Author of the Book" class="m-2 rounded-lg border-2 border-black p-1"/>
+      <br>
+
+      <label for="description">Description : </label>
+      <textarea id="description" class="m-2 w-72 h-40 rounded-lg border-2 border-black p-0">
+      </textarea>
+      <br>
+
+      <label for="pages">Pages : </label>
+      <input type="number" id="pages" placeholder="Pages of the Book" class="m-2 rounded-lg border-2 border-black p-1"/>
+      <br>
+
+      <label for="cover">Cover Photo : </label>
+      <input type="file" id="cover" placeholder="Pages of the Book" class="m-2 rounded-lg border-2 border-black p-1"/>
+      <br>
+
+  <button class="sub text-lg p-1 px-4 border-2 border-black rounded-xl float-right text-white bg-black">Add book</button>
+<button class="mx-3 cf2 text-lg p-1 px-4 border-2 border-black rounded-xl float-right bg-white">Close</button>
+    
+
+    </div>
+
+<!-- updating form -->
+<div class="uf fixed top-[50%] bg-white flex-col left-[50%] translate-x-[-50%] translate-y-[-50%] border-t-2 border-black shadow-gray-400 shadow-lg rounded-xl p-4">
+  <h1 class="text-xl m-5 font-bold text-center">
+    Adding Book
+  </h1>
+
+  <label for="title2">Title : </label>
+  <input id="title2" placeholder="Title of the Book" class="m-2 rounded-lg border-2 border-black p-1"/>
+<br>
+  <label for="author2">Author : </label>
+  <input id="author2" placeholder="Author of the Book" class="m-2 rounded-lg border-2 border-black p-1"/>
+  <br>
+
+  <label for="description2">Description : </label>
+  <textarea id="description2" class="m-2 w-72 h-40 rounded-lg border-2 border-black p-0">
+  </textarea>
+  <br>
+
+  <label for="pages2">Pages : </label>
+  <input type="number" id="pages2" placeholder="Pages of the Book" class="m-2 rounded-lg border-2 border-black p-1"/>
+  <br>
+
+  <label for="cover2">Cover Photo : </label>
+  <input type="file" id="cover2" placeholder="Pages of the Book" class="m-2 rounded-lg border-2 border-black p-1"/>
+  <br>
+
+<button class="sub2 text-lg p-1 px-4 border-2 border-black rounded-xl float-right text-white bg-black">Add book</button>
+<button class="mx-3 cf1 text-lg p-1 px-4 border-2 border-black rounded-xl float-right bg-white">Close</button>
+
+
+</div>
+
+
+
+
+  </div>
+
+
+
+<script>
+
+  $('.cf').hide()
+  $('.uf').hide()
+
+  $('.cf1').click(function(){
+  $('.uf').hide(100)
+
+  })
+
+  $('.cf2').click(function(){
+  $('.cf').hide(100)
+
+  })
+
+  async function image(url){
+        var response = await fetch(url);
+        var blob = await response.blob();
+        var file = new File([blob],'image_source.jpg',{type: 'image/jpeg'})
+        return filelist
+      }
+
+  var main_pk = null
+
+function update_pk(pk){
+  window.main_pk = pk
+  $('.uf').show(300)
+
+  $.ajax({
+    url:'/books/update_delete_book/'+String(pk),
+    method:'GET',
+    success:function(res){
+      document.getElementById('title2').value = res.title
+      document.getElementById('author2').value = res.author
+      document.getElementById('description2').value = res.description
+      document.getElementById('pages2').value = res.pages_of_book
+    }
+  })
+}
+
+
+  // adding book
+$('.sub').click(async function(){
+  
+  const form = new FormData()
+  form.append('title',document.getElementById('title').value)
+  form.append('author',document.getElementById('author').value)
+  form.append('description',document.getElementById('description').value)
+  form.append('pages_of_book',document.getElementById('pages').value)
+  form.append('cover_image',document.getElementById('cover').files[0])
+  
+  const response = await fetch('/books/get_create_book',{
+    method:'POST',
+    body:form
+  })
+  const data = await response.json()
+  if(response.status == 200 || response.status == 201){
+    window.location.reload()
+  }
+})
+
+
+  // updating book
+
+$('.sub2').click(async function(){
+
+  const form = new FormData()
+  form.append('title',document.getElementById('title2').value)
+  form.append('author',document.getElementById('author2').value)
+  form.append('description',document.getElementById('description2').value)
+  form.append('pages_of_book',document.getElementById('pages2').value)
+  form.append('cover_image',document.getElementById('cover2').files[0])
+  
+  const response = await fetch('/books/update_delete_book/'+window.main_pk,{
+    method:'PUT',
+    body:form
+  })
+  const data = await response.json()
+  if(response.status == 200){
+    window.location.reload()
+  }
+})
+
+
+
+// deleting product
+
+function del(pk){
+  $.ajax({
+    url:'/books/update_delete_book/'+String(pk),
+    method:'DELETE',
+    success:function(){
+      window.location.reload()
+    }
+  })
+
+}
+
+
+
+$('.new').click(function(){
+  $('.cf').toggle(300)
+
+})
+
+
+</script>
+
+
+
+</body>
+</html>
